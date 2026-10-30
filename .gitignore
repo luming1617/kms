@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+.venv/
+.env
+reports/tmp/
+
+# JetBrains IDEs (IntelliJ IDEA, PyCharm, WebStorm, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws

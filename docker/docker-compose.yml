@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg18
+    container_name: ics-pg18
+    environment:
+      POSTGRES_USER: ics
+      POSTGRES_PASSWORD: ics
+      POSTGRES_DB: ics
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ics -d ics"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  pushgateway:
+    image: prom/pushgateway:v1.9.0
+    container_name: ics-pushgateway
+    ports:
+      - "9091:9091"

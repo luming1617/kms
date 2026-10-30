@@ -1,0 +1,16 @@
+{
+  "title": "ICS Knowledge Service",
+  "panels": [
+    {"title": "HTTP P95 by route", "type": "timeseries",
+     "targets": [{"expr": "histogram_quantile(0.95, sum by (le, route)(rate(knowledge_api_http_request_duration_seconds_bucket[5m])))"}]},
+    {"title": "L2 discard by channel", "type": "timeseries",
+     "targets": [{"expr": "sum by (channel)(rate(knowledge_l2_channel_discard_total[5m]))"}]},
+    {"title": "Shortage attribution", "type": "timeseries",
+     "targets": [{"expr": "sum by (reason)(rate(knowledge_shortage_total[5m]))"}]},
+    {"title": "Ladder steps", "type": "heatmap",
+     "targets": [{"expr": "sum by (le)(rate(knowledge_ladder_steps_bucket[5m]))"}]}
+  ],
+  "templating": {"list": [
+    {"name": "workspace", "type": "query", "query": "label_values(knowledge_l2_channel_entered_total, workspace)"}
+  ]}
+}

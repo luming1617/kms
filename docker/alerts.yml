@@ -1,0 +1,42 @@
+groups:
+  - name: knowledge-api-availability
+    rules:
+      - alert: KnowledgeApiHigh5xx
+        expr: sum(rate(knowledge_api_http_requests_total{status_code=~"5.."}[5m])) by (route) > 0.01
+        for: 5m
+        labels: {severity: P0}
+        annotations: {summary: "5xx 比例超阈值"}
+      - alert: KnowledgeApiP95Slow
+        expr: histogram_quantile(0.95, sum by (le, route)(rate(knowledge_api_http_request_duration_seconds_bucket[5m]))) > 5
+        for: 10m
+        labels: {severity: P1}
+        annotations: {summary: "P95 超过 5s"}
+  - name: knowledge-api-component
+    rules:
+      - alert: NightlyReconcileMissing
+        expr: time() - knowledge_reconcile_last_success_timestamp_seconds > 129600
+        for: 10m
+        labels: {severity: P1}
+        annotations: {summary: "对账作业超过 36h 未成功"}
+      - alert: ExposureQueueBacklog
+        expr: knowledge_publish_queue_depth > 100
+        for: 10m
+        labels: {severity: P1}
+        annotations: {summary: "发布队列积压"}
+  - name: knowledge-api-quality
+    rules:
+      - alert: LeakageNonZero
+        expr: increase(knowledge_leakage_total[1h]) > 0
+        for: 1m
+        labels: {severity: P0}
+        annotations: {summary: "L2 授权维丢弃非零：疑似 L1 漏点"}
+      - alert: KnowledgeL2BatchAborted
+        expr: increase(knowledge_l2_batch_aborted_total[5m]) > 0
+        for: 1m
+        labels: {severity: P1}
+        annotations: {summary: "L2 批次整批丢弃：检查 L1/投影漂移"}
+      - alert: FaithfulnessDrop
+        expr: knowledge_eval_faithfulness < 0.9
+        for: 30m
+        labels: {severity: P1}
+        annotations: {summary: "忠实度低于校准阈值"}

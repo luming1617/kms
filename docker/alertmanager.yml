@@ -1,0 +1,5 @@
+route:
+  receiver: default
+  group_by: [alertname, severity]
+receivers:
+  - name: default
